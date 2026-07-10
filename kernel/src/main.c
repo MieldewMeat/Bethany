@@ -4,10 +4,12 @@
 
 #include <limine.h>
 
+#include "video/graphics.h"
 #include "video/terminal.h"
+
 #include "memory/memory.h"
 #include "memory/pmm.h"
-#include "print_and_stuff/printf.h"
+#include "print_and_stuff/print.h"
 
 
 __attribute__((used, section(".limine_requests")))
@@ -109,28 +111,13 @@ void kmain(void) {
 
     memory_init(regions, memmap->entry_count);
 
+    memory_print();
+
     print_string("\n\n\n");
 
     pmm_init(hhdm);
 
     pmm_print();
-
-    void* p1 = pmm_alloc_page();
-    void* p2 = pmm_alloc_page();
-    void* p3 = pmm_alloc_page();
-
-    pmm_free_page(p2);
-
-    void* p4 = pmm_alloc_page();
-
-    if(p4 == p2) {
-        print_string("Working Fine");
-    }else{
-        print_char('\n');
-        print_hex((uint64_t)p2);
-        print_char('\n');
-        print_hex((uint64_t)p4);
-    }
     
     hcf();
 }
