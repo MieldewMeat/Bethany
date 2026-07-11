@@ -7,10 +7,11 @@
 #include "video/graphics.h"
 #include "video/terminal.h"
 
-#include "memory/memory.h"
-#include "memory/pmm.h"
 #include "print_and_stuff/print.h"
 
+#include "memory/memory.h"
+#include "memory/pmm.h"
+#include "memory/vmm.h"
 
 __attribute__((used, section(".limine_requests")))
 static volatile uint64_t limine_base_revision[] = LIMINE_BASE_REVISION(6);
@@ -111,13 +112,13 @@ void kmain(void) {
 
     memory_init(regions, memmap->entry_count);
 
-    memory_print();
-
-    print_string("\n\n\n");
-
     pmm_init(hhdm);
 
     pmm_print();
-    
+
+    vmm_init(hhdm);
+
+    print_string("\n\n");
+
     hcf();
 }

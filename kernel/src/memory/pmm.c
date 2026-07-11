@@ -3,7 +3,6 @@
 #include "memory.h"
 #include "../print_and_stuff/print.h"
 
-#define PAGE_SIZE 4096
 #define MAX_PAGES 1048576
 
 typedef struct{
