@@ -258,15 +258,15 @@ void vmm_unmap(uint64_t virt){
 bool vmm_is_mapped(uint64_t virt){
     page_table_t *pdpt = ensure_table(pml4, pml4_index(virt));
 
-    if(pdpt == NULL) return;
+    if(pdpt == NULL) return 0;
 
     page_table_t *pd = ensure_table(pdpt, pdpt_index(virt));
 
-    if(pd == NULL) return;
+    if(pd == NULL) return 0;
 
     page_table_t *pt = ensure_table(pd, pd_index(virt));
 
-    if(pt == NULL) return;
+    if(pt == NULL) return 0;
 
     page_entry_t pte = (*pt)[pt_index(virt)];
 

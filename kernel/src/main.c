@@ -13,6 +13,17 @@
 #include "memory/pmm.h"
 #include "memory/vmm.h"
 
+#include "interruptions/idt.h"
+#include "interruptions/pic.h"
+
+#include "io/io.h"
+
+#include "timer/pit.h"
+
+#include "cpu/msr.h"
+
+#define LAPIC_LVT0 (0x350 / 4)
+
 __attribute__((used, section(".limine_requests")))
 static volatile uint64_t limine_base_revision[] = LIMINE_BASE_REVISION(6);
 
@@ -110,6 +121,8 @@ void kmain(void) {
         }
     }
 
+    volatile uint32_t *lapic = (volatile uint32_t *)(hhdm + 0xFEE00000);
+
     memory_init(regions, memmap->entry_count);
 
     pmm_init(hhdm);
@@ -118,7 +131,14 @@ void kmain(void) {
 
     vmm_init(hhdm);
 
-    print_string("\n\n");
+   idt_init();
+    pic_init();
+    pit_init(100);
+
+    vmm_map(hhdm + 0xFEE00000, 0xFEE00000, PAGE_PRESENT | PAGE_WRITABLE | PAGE_CACHE_DISABLE);
+    lapic[LAPIC_LVT0] = 0x00008700;
+
+    __asm__ volatile("sti");
 
     hcf();
 }
