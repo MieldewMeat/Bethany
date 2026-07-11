@@ -3,6 +3,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+void terminal_move_cursor(int64_t y, int64_t x);
+
 void terminal_clear();
 
 void terminal_init(uint32_t c, uint32_t bgc);

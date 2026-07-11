@@ -22,6 +22,8 @@
 
 #include "cpu/msr.h"
 
+#include "drivers/keyboard/keyboard.h"
+
 #define LAPIC_LVT0 (0x350 / 4)
 
 __attribute__((used, section(".limine_requests")))
@@ -127,18 +129,20 @@ void kmain(void) {
 
     pmm_init(hhdm);
 
-    pmm_print();
-
     vmm_init(hhdm);
 
-   idt_init();
+    idt_init();
     pic_init();
     pit_init(100);
+
+    keyboard_init();
 
     vmm_map(hhdm + 0xFEE00000, 0xFEE00000, PAGE_PRESENT | PAGE_WRITABLE | PAGE_CACHE_DISABLE);
     lapic[LAPIC_LVT0] = 0x00008700;
 
     __asm__ volatile("sti");
+
+    print_char('\n');
 
     hcf();
 }
