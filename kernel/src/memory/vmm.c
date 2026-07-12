@@ -4,7 +4,7 @@
 static page_table_t *pml4 = NULL;
 static uint64_t hhdm_offset = 0;
 
-static uint64_t read_cr3(void){
+uint64_t vmm_read_cr3(void){
     uint64_t value;
 
     __asm__ volatile(
@@ -94,7 +94,7 @@ static void print_table(page_table_t *table, const char *name){
 void vmm_init(uint64_t hhdm){
     hhdm_offset = hhdm;
 
-    uint64_t cr3 = read_cr3();
+    uint64_t cr3 = vmm_read_cr3();
 
     pml4 = (page_table_t *) (cr3 + hhdm_offset);
 }
@@ -104,7 +104,7 @@ void vmm_print(void){
     print_string("Virtual memory manager\n\n");
 
     print_string("CR3: ");
-    print_hex(read_cr3());
+    print_hex(vmm_read_cr3());
 
     print_string("\nPML4: ");
     print_hex((uint64_t)pml4);
@@ -273,13 +273,13 @@ bool vmm_is_mapped(uint64_t virt){
     return entry_present(pte);
 }
 
-void *vmm_alloc_page(uint64_t virt, uint64_t flags){
+bool vmm_alloc_page(uint64_t virt, uint64_t flags){
     void *phys = pmm_alloc_page();
 
-    if(phys == NULL) return NULL;
+    if(phys == NULL) return false;
 
     vmm_map(virt, (uint64_t)phys, flags);
-    return (void *)virt;
+    return true;
 }
 
 void vmm_free_page(uint64_t virt){

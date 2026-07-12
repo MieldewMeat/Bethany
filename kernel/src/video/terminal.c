@@ -68,6 +68,13 @@ void terminal_move_cursor(int64_t y, int64_t x){
     terminal.cursor_y = (uint64_t)floor_mod(new_y, h);
 }
 
+void terminal_set_position(uint64_t y, uint64_t x){
+    if(x > graphics_width() || y > graphics_height()) return;
+
+    terminal.cursor_x = x;
+    terminal.cursor_y = y;
+}
+
 
 void terminal_putchar(char c){
     switch(c){

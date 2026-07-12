@@ -24,6 +24,11 @@
 
 #include "drivers/keyboard/keyboard.h"
 
+#include "memory/heap.h"
+
+#include "scheduler/task.h"
+#include "scheduler/scheduler.h"
+
 #define LAPIC_LVT0 (0x350 / 4)
 
 __attribute__((used, section(".limine_requests")))
@@ -56,6 +61,21 @@ static volatile uint64_t limine_requests_end_marker[] = LIMINE_REQUESTS_END_MARK
 static void hcf(void) {
     for (;;) {
         asm ("hlt");
+    }
+}
+
+void task1(void){
+    print_string("ENTREI A\n");
+    for(;;){
+        print_char('A');
+        scheduler_schedule();
+    }
+}
+void task2(void){
+    print_string("ENTREI B\n");
+    for(;;){
+        print_char('B');
+        scheduler_schedule();
     }
 }
 
@@ -142,7 +162,19 @@ void kmain(void) {
 
     __asm__ volatile("sti");
 
-    print_char('\n');
+    heap_init();
 
-    hcf();
+    scheduler_init();
+
+    task_t *t1 = task_create(task1);
+    task_t *t2 = task_create(task2);
+
+    scheduler_add(t1);
+    scheduler_add(t2);
+
+    scheduler_schedule();
+    
+
+    for(;;)
+        asm("hlt");
 }

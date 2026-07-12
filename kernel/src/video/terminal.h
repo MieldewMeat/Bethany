@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 void terminal_move_cursor(int64_t y, int64_t x);
+void terminal_set_position(uint64_t y, uint64_t x);
 
 void terminal_clear();
 

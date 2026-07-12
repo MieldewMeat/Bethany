@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 #include "pmm.h"
 
@@ -18,6 +19,10 @@
 typedef uint64_t page_entry_t;
 typedef page_entry_t page_table_t[512];
 
+uint64_t vmm_read_cr3(void);
+
+
+
 void vmm_init(uint64_t hhdm);
 
 void vmm_map(uint64_t virt, uint64_t phys, uint64_t flags);
@@ -31,3 +36,9 @@ void vmm_print(void);
 void vmm_debug_address(uint64_t addr);
 
 void vmm_walk(uint64_t addr);
+
+bool vmm_is_mapped(uint64_t virt);
+
+bool vmm_alloc_page(uint64_t virt, uint64_t flags);
+
+void vmm_free_page(uint64_t virt);
