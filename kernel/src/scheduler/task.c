@@ -3,6 +3,8 @@
 #include "context.h"
 #include "scheduler.h"
 
+#include "../timer/pit.h"
+
 #include "../memory/heap.h"
 #include "../memory/vmm.h"
 #include "../print_and_stuff/print.h"
@@ -11,15 +13,15 @@
 
 static uint64_t next_pid = 1;
 
+void task_yield(void){
+    scheduler_schedule();
+}
+
 static void task_trampoline(void){
 
-    task_t * task = scheduler_current();
+    scheduler_current()->entry();
 
-    task->entry();
-
-    task->state = TASK_DEAD;
-
-    for(;;) __asm__ volatile("hlt");
+    task_exit();
 }
 
 task_t *task_create(task_entry_t entry){
@@ -95,4 +97,23 @@ task_t *task_create_current(void){
     task->next = NULL;
 
     return task;
+}
+
+void task_exit(void){
+    task_t *task = scheduler_current();
+
+    task->state = TASK_DEAD;
+
+    task_yield();
+
+    for(;;) __asm__ volatile ("hlt");
+}
+
+void task_sleep(uint64_t ticks){
+    task_t *task = scheduler_current();
+    
+    task->wake_tick = pit_ticks() + ticks;
+    task->state = TASK_SLEEPING;
+
+    task_yield();
 }

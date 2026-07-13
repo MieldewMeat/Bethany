@@ -20,8 +20,6 @@
 
 #include "timer/pit.h"
 
-#include "cpu/msr.h"
-
 #include "drivers/keyboard/keyboard.h"
 
 #include "memory/heap.h"
@@ -65,17 +63,23 @@ static void hcf(void) {
 }
 
 void task1(void){
-    print_string("ENTREI A\n");
     for(;;){
         print_char('A');
-        scheduler_schedule();
+        task_sleep(10);
     }
 }
+
 void task2(void){
-    print_string("ENTREI B\n");
     for(;;){
         print_char('B');
-        scheduler_schedule();
+        task_sleep(20);
+    }
+}
+
+void task3(void){
+    for(;;){
+        print_char('C');
+        task_sleep(40);
     }
 }
 
@@ -171,10 +175,9 @@ void kmain(void) {
 
     scheduler_add(t1);
     scheduler_add(t2);
+    scheduler_add(task_create(task3));
 
     scheduler_schedule();
-    
 
-    for(;;)
-        asm("hlt");
+    hcf();
 }

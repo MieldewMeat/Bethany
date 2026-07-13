@@ -1,10 +1,11 @@
 #include <stddef.h>
 
 #include "irq.h"
-
 #include "pic.h"
 
+#include "../timer/pit.h"
 #include "../print_and_stuff/print.h"
+#include "../scheduler/scheduler.h"
 
 static irq_handler_t irq_handlers[16] = {0};
 
@@ -22,4 +23,9 @@ void irq_handler(interrupt_frame_t* frame){
     
 
     pic_send_eoi(irq);
+
+    if(need_reschedule){
+        need_reschedule = false;
+        scheduler_schedule();
+    }
 }
