@@ -1,6 +1,7 @@
 #pragma once
 
 #include "task.h"
+#include "../interruptions/isr.h"
 
 void scheduler_init(void);
 
@@ -12,4 +13,4 @@ task_t *scheduler_current(void);
 
 void scheduler_next(void);
 
-void scheduler_schedule(void);
+uint64_t scheduler_schedule_irq(interrupt_frame_t *frame);

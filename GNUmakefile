@@ -24,7 +24,9 @@ run:
 		-M q35 \
 		-cdrom $(IMAGE_NAME).iso \
 		-boot d \
-		$(QEMUFLAGS)
+		$(QEMUFLAGS)\
+		-no-reboot\
+		
 
 rund:
 	qemu-system-x86_64 \
@@ -33,7 +35,10 @@ rund:
     	-boot d \
     	-no-reboot \
     	-no-shutdown \
-    	$(QEMUFLAGS)
+    	$(QEMUFLAGS) \
+		-d int,cpu_reset\
+		-D qemu.log \
+		-s -S
 
 edk2-ovmf-bins:
 	curl -L https://github.com/osdev0/edk2-ovmf-stable-bins/releases/latest/download/edk2-ovmf-bins.tar.gz | gunzip | tar -xf -

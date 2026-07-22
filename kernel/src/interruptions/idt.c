@@ -1,11 +1,9 @@
 #include <stddef.h>
 
-#include "../print_and_stuff/print.h"
+#include "../print/print.h"
 #include "idt.h"
 #include "isr.h"
 #include "irq.h"
-
-#define KERNEL_CODE_SELECTOR 0x28
 
 static idt_entry_t idt[256];
 static idtr_t idtr;
@@ -42,6 +40,10 @@ void idt_init(void){
 
     for(uint8_t i = 0; i < 16; i++)
         idt_set_gate(i + 32, irq_stub_table[i], 0x8E);
+
+    idt_set_gate(0x80, yield_stub, 0x8E);
+
+    
     
     idt_load();
 }

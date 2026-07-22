@@ -1,23 +1,25 @@
 #include "task.h"
 
-#include "context.h"
 #include "scheduler.h"
 
-#include "../timer/pit.h"
+#include "../drivers/pit/pit.h"
 
 #include "../memory/heap.h"
 #include "../memory/vmm.h"
-#include "../print_and_stuff/print.h"
+#include "../print/print.h"
+#include "../interruptions/idt.h"
 
 #define TASK_STACK_SIZE (4 * 1024)
 
 static uint64_t next_pid = 1;
 
 void task_yield(void){
-    scheduler_schedule();
+    __asm__ volatile("int $0x80");
 }
 
 static void task_trampoline(void){
+
+    print_string("TRAMPOLINE\n");
 
     scheduler_current()->entry();
 
@@ -46,20 +48,34 @@ task_t *task_create(task_entry_t entry){
 
     stack_top = (uint8_t *)((uintptr_t)stack_top & ~0xFULL);
 
-    stack_top -= sizeof(uint64_t);
-    *(uint64_t *)stack_top = (uint64_t)task_trampoline;
+    stack_top -= sizeof(interrupt_frame_t);
 
-    stack_top -= sizeof(context_t);
+    interrupt_frame_t *frame = (interrupt_frame_t *)stack_top;
 
-    context_t *ctx = (context_t*)stack_top;
+    *frame = (interrupt_frame_t){0};
 
-    *ctx = (context_t){0};
+    frame->rip = (uint64_t)task_trampoline;
 
-    ctx->rdi = (uint64_t)entry;
+    print_string("task_trampoline = ");
+print_hex((uint64_t)task_trampoline);
+print_char('\n');
 
-    task->rsp = (uint64_t)ctx;
+print_string("frame->rip = ");
+print_hex(frame->rip);
+print_char('\n');
 
+print_string("frame addr = ");
+print_hex((uint64_t)frame);
+print_char('\n');
+
+    frame->cs = KERNEL_CODE_SELECTOR;
+    frame->rflags = 0x202;
+
+    frame->interrupt = 0;
+    frame->error = 0;
     
+    task->rsp = (uint64_t)frame;
+
     task->cr3 = vmm_read_cr3();
     task->state = TASK_READY;
     task->next = NULL;

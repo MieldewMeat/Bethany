@@ -2,8 +2,6 @@
 #include "graphics.h"
 #include "font.h"
 
-#include "../print_and_stuff/print.h"
-
 typedef struct {
     size_t cursor_x;
     size_t cursor_y;

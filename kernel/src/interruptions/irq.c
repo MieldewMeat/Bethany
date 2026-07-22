@@ -3,8 +3,8 @@
 #include "irq.h"
 #include "pic.h"
 
-#include "../timer/pit.h"
-#include "../print_and_stuff/print.h"
+#include "../drivers/pit/pit.h"
+#include "../print/print.h"
 #include "../scheduler/scheduler.h"
 
 static irq_handler_t irq_handlers[16] = {0};
@@ -15,7 +15,7 @@ void irq_register(uint8_t irq, irq_handler_t handler){
     irq_handlers[irq] = handler;
 }
 
-void irq_handler(interrupt_frame_t* frame){
+uint64_t  irq_handler(interrupt_frame_t* frame){
     uint8_t irq = frame->interrupt - 32;
 
     if(irq_handlers[irq] != NULL)
@@ -26,6 +26,8 @@ void irq_handler(interrupt_frame_t* frame){
 
     if(need_reschedule){
         need_reschedule = false;
-        scheduler_schedule();
+        return scheduler_schedule_irq(frame);
     }
+    
+    return (uint64_t)frame;
 }

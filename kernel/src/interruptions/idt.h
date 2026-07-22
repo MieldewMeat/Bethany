@@ -1,6 +1,8 @@
 #pragma once
 #include <stdint.h>
 
+#define KERNEL_CODE_SELECTOR 0x28
+
 typedef struct __attribute__((packed)) {
     uint16_t offset_low;
     uint16_t selector;
@@ -17,3 +19,5 @@ typedef struct __attribute__((packed)) {
 } idtr_t;
 
 void idt_init(void);
+
+extern void yield_stub();

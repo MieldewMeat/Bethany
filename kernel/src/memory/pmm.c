@@ -1,7 +1,7 @@
 #include "pmm.h"
 
 #include "memory.h"
-#include "../print_and_stuff/print.h"
+#include "../print/print.h"
 
 #define MAX_PAGES 1048576
 

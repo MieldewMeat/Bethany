@@ -1,6 +1,6 @@
 #include "memory.h"
 
-#include "../print_and_stuff/print.h"
+#include "../print/print.h"
 
 static memory_region_t regions[256];
 static size_t region_count = 0;

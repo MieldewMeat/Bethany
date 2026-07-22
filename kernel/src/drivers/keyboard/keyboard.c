@@ -3,7 +3,7 @@
 #include "keyboard_handler.h"
 
 #include "../../interruptions/irq.h"
-#include "../../print_and_stuff/print.h"
+#include "../../print/print.h"
 #include "../../video/terminal.h"
 
 static void keyboard_irq(interrupt_frame_t *frame) {

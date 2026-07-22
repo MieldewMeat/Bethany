@@ -1,5 +1,5 @@
 #include "vmm.h"
-#include "../print_and_stuff/print.h"
+#include "../print/print.h"
 
 static page_table_t *pml4 = NULL;
 static uint64_t hhdm_offset = 0;

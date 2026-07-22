@@ -7,7 +7,7 @@
 #include "video/graphics.h"
 #include "video/terminal.h"
 
-#include "print_and_stuff/print.h"
+#include "print/print.h"
 
 #include "memory/memory.h"
 #include "memory/pmm.h"
@@ -18,7 +18,7 @@
 
 #include "io/io.h"
 
-#include "timer/pit.h"
+#include "drivers/pit/pit.h"
 
 #include "drivers/keyboard/keyboard.h"
 
@@ -26,6 +26,9 @@
 
 #include "scheduler/task.h"
 #include "scheduler/scheduler.h"
+
+#include "interruptions/gdt.h"
+#include "interruptions/isr.h"
 
 #define LAPIC_LVT0 (0x350 / 4)
 
@@ -84,6 +87,8 @@ void task3(void){
 }
 
 void kmain(void) {
+    gdt_init();
+
     if (LIMINE_BASE_REVISION_SUPPORTED(limine_base_revision) == false) hcf();
 
     if (framebuffer_request.response == NULL
@@ -159,12 +164,10 @@ void kmain(void) {
     pic_init();
     pit_init(100);
 
-    keyboard_init();
+    keyboard_init(); 
 
     vmm_map(hhdm + 0xFEE00000, 0xFEE00000, PAGE_PRESENT | PAGE_WRITABLE | PAGE_CACHE_DISABLE);
     lapic[LAPIC_LVT0] = 0x00008700;
-
-    __asm__ volatile("sti");
 
     heap_init();
 
@@ -177,7 +180,21 @@ void kmain(void) {
     scheduler_add(t2);
     scheduler_add(task_create(task3));
 
-    scheduler_schedule();
+    print_char('\n');
+
+    print_uint(sizeof(interrupt_frame_t));
+    print_char('\n');
+
+    print_uint(offsetof(interrupt_frame_t, rip));
+    print_char('\n');
+    print_uint(offsetof(interrupt_frame_t, cs));
+    print_char('\n');
+    print_uint(offsetof(interrupt_frame_t, rflags));
+    print_char('\n');
+
+    __asm__ volatile("sti");
+
+    task_yield();
 
     hcf();
 }

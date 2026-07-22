@@ -1,8 +1,7 @@
 #include "scheduler.h"
-#include "context.h"
 
-#include "../print_and_stuff/print.h"
-#include "../timer/pit.h"
+#include "../print/print.h"
+#include "../drivers/pit/pit.h"
 
 static task_t *first = NULL;
 static task_t *current = NULL;
@@ -73,8 +72,7 @@ void scheduler_remove(task_t *task){
     task_destroy(task);
 }
 
-void scheduler_schedule(void){
-
+uint64_t scheduler_schedule_irq(interrupt_frame_t *frame){
     if(task_to_destroy){
         scheduler_remove(task_to_destroy);
         task_to_destroy = NULL;
@@ -92,16 +90,17 @@ void scheduler_schedule(void){
 
     task_t *old = current;
 
+    old->rsp = (uint64_t)frame;
+
     scheduler_next();
 
-    if(old == current) return;
+    if(old == current) return old->rsp;
 
-    if(old->state == TASK_RUNNING)
-        old->state = TASK_READY;
+    if(old->state == TASK_RUNNING) old->state = TASK_READY;
     
     current->state = TASK_RUNNING;
 
     if(old->state == TASK_DEAD) task_to_destroy = old;
 
-    context_switch(&old->rsp, current->rsp);
+    return current->rsp;
 }

@@ -57,6 +57,8 @@ irq%1:
 
     call irq_handler
 
+    mov rsp, rax
+
     POP_REGS
 
     add rsp,16
@@ -82,6 +84,27 @@ IRQ 12,44
 IRQ 13,45
 IRQ 14,46
 IRQ 15,47
+
+extern scheduler_schedule_irq
+
+global yield_stub
+
+yield_stub:
+    push 0
+    push 0x80
+
+    PUSH_REGS
+
+    mov rdi, rsp
+    call scheduler_schedule_irq
+
+    mov rsp, rax
+
+    POP_REGS
+
+    add rsp, 16
+
+    iretq
 
 global irq_stub_table
 

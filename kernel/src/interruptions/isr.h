@@ -22,6 +22,10 @@ typedef struct{
 
     uint64_t interrupt;
     uint64_t error;
+
+    uint64_t rip;
+    uint64_t cs;
+    uint64_t rflags;
 } interrupt_frame_t;
 
 extern void* isr_stub_table[];

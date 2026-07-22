@@ -1,5 +1,5 @@
 #include "isr.h"
-#include "../print_and_stuff/print.h"
+#include "../print/print.h"
 
 void isr_handler(interrupt_frame_t* frame){
     (void)frame;
