@@ -173,24 +173,9 @@ void kmain(void) {
 
     scheduler_init();
 
-    task_t *t1 = task_create(task1);
-    task_t *t2 = task_create(task2);
-
-    scheduler_add(t1);
-    scheduler_add(t2);
+    scheduler_add(task_create(task1));
+    scheduler_add(task_create(task2));
     scheduler_add(task_create(task3));
-
-    print_char('\n');
-
-    print_uint(sizeof(interrupt_frame_t));
-    print_char('\n');
-
-    print_uint(offsetof(interrupt_frame_t, rip));
-    print_char('\n');
-    print_uint(offsetof(interrupt_frame_t, cs));
-    print_char('\n');
-    print_uint(offsetof(interrupt_frame_t, rflags));
-    print_char('\n');
 
     __asm__ volatile("sti");
 

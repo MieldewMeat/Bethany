@@ -56,18 +56,6 @@ task_t *task_create(task_entry_t entry){
 
     frame->rip = (uint64_t)task_trampoline;
 
-    print_string("task_trampoline = ");
-print_hex((uint64_t)task_trampoline);
-print_char('\n');
-
-print_string("frame->rip = ");
-print_hex(frame->rip);
-print_char('\n');
-
-print_string("frame addr = ");
-print_hex((uint64_t)frame);
-print_char('\n');
-
     frame->cs = KERNEL_CODE_SELECTOR;
     frame->rflags = 0x202;
 

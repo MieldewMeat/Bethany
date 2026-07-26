@@ -57,5 +57,6 @@ void gdt_init(void){
     gdtr.base = (uint64_t)gdt;
 
     gdt_flush((uint64_t)&gdtr, KERNEL_CODE_SELECTOR, KERNEL_DATA_SELECTOR);
+    gdt[7] &= ~(1ULL << 41);
     tss_flush(0x38);
 }
