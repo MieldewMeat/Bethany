@@ -1,4 +1,4 @@
-Kernel core
+KERNEL CORE
 -----------
     [x] PMM
     [x] VMM
@@ -6,23 +6,50 @@ Kernel core
     [x] Scheduler
     [x] Tasks
 
-Kernel Objects
+KERNEL OBJECTS
 --------------
-    [ ] Mutex
-    [ ] Semaphore
-    [ ] Queue
-    [ ] Event
+    [x] Mutex
+    [x] Semaphore
+    [x] Queue
+    [x] Event
 
-Storage
+STORAGE
 -------
     [ ] VFS
     [ ] RAMFS
-    [ ] FAT32
+    [ ] BFS (Bethany File System)
 
-Drivers
+DRIVERS
 -------
     [x] PIT
     [x] Keyboard
     [ ] Mouse
     [ ] ATA
     [ ] PCI
+
+OS MAKING
+---------
+    [ ] Language Making
+    [ ] exec()
+    [ ] Window manager
+    [ ] Shell
+    [ ] BVI (Bethany Vector Images)
+    [ ] BVV (Bethany Vector Video)
+    [ ] BVS (Bethany Vector Scene)
+    [ ] BVA (Bethany Vector App)
+
+OS LIBS
+-------
+    [ ] Themes
+    [ ] Basic font
+    [ ] Basic sounds
+
+APPS
+----
+    [ ] Text editor
+    [ ] File Explorer
+    [ ] Shell GUI
+    [ ] Image Viewer
+    [ ] Video Viewer
+    [ ] BSceneS (Bethany Scene Suport)
+    [ ] Music player

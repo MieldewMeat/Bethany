@@ -67,43 +67,6 @@ static void hcf(void) {
     }
 }
 
-queue_t queue;
-
-void producer(void *arg){
-
-    (void)arg;
-
-    for(int i = 0; i < 10; i++){
-
-        print_string("Produziu ");
-        print_uint(i);
-        print_char('\n');
-
-        queue_push(&queue, (void *)(uintptr_t)i);
-
-    }
-
-    task_exit();
-}
-
-void consumer(void *arg){
-
-    (void)arg;
-
-    for(int i = 0; i < 10; i++){
-
-        int value = (int)(uintptr_t)queue_pop(&queue);
-
-        print_string("Consumiu ");
-        print_uint(value);
-        print_char('\n');
-
-        task_sleep(35);
-    }
-
-    task_exit();
-}
-
 void kmain(void) {
     if (LIMINE_BASE_REVISION_SUPPORTED(limine_base_revision) == false) hcf();
 
@@ -191,12 +154,7 @@ void kmain(void) {
 
     scheduler_init();
 
-    queue_init(&queue, 2);
-
-    scheduler_add(task_create(producer, NULL));
-    scheduler_add(task_create(consumer, NULL));
-
-    scheduler_schedule();
+    
 
     scheduler_schedule();
 
