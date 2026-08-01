@@ -27,6 +27,11 @@
 #include "scheduler/task.h"
 #include "scheduler/scheduler.h"
 
+#include "sync/mutex.h"
+#include "sync/semaphore.h"
+#include "sync/event.h"
+#include "sync/queue.h"
+
 #define LAPIC_LVT0 (0x350 / 4)
 
 __attribute__((used, section(".limine_requests")))
@@ -62,36 +67,41 @@ static void hcf(void) {
     }
 }
 
-void task_w(void *arg){
-    print_string("Worker: start\n");
+queue_t queue;
 
-    task_sleep(100);
+void producer(void *arg){
 
-    print_string("Worker: End\n");
+    (void)arg;
+
+    for(int i = 0; i < 10; i++){
+
+        print_string("Produziu ");
+        print_uint(i);
+        print_char('\n');
+
+        queue_push(&queue, (void *)(uintptr_t)i);
+
+    }
+
+    task_exit();
 }
 
-void task_j1(void *arg){
+void consumer(void *arg){
 
-    task_t *worker = arg;
+    (void)arg;
 
-    print_string("Joiner1: start\n");
+    for(int i = 0; i < 10; i++){
 
-    task_sleep(20);
-    task_join(worker);
-    task_join(worker);
+        int value = (int)(uintptr_t)queue_pop(&queue);
 
-    print_string("Joiner1: End\n");
-}
+        print_string("Consumiu ");
+        print_uint(value);
+        print_char('\n');
 
-void task_j2(void *arg){
+        task_sleep(35);
+    }
 
-    task_t *worker = arg;
-
-    print_string("Joiner2: start\n");
-
-    task_join(worker);
-
-    print_string("Joiner2: End\n");
+    task_exit();
 }
 
 void kmain(void) {
@@ -181,12 +191,12 @@ void kmain(void) {
 
     scheduler_init();
 
-    task_t *work = task_create(task_w, NULL);
+    queue_init(&queue, 2);
 
-    scheduler_add(work);
+    scheduler_add(task_create(producer, NULL));
+    scheduler_add(task_create(consumer, NULL));
 
-    scheduler_add(task_create(task_j1, work));
-    scheduler_add(task_create(task_j2, work));
+    scheduler_schedule();
 
     scheduler_schedule();
 
