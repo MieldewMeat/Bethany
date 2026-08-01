@@ -62,25 +62,36 @@ static void hcf(void) {
     }
 }
 
-void task1(void){
-    for(;;){
-        print_char('A');
-        task_sleep(10);
-    }
+void task_w(void *arg){
+    print_string("Worker: start\n");
+
+    task_sleep(100);
+
+    print_string("Worker: End\n");
 }
 
-void task2(void){
-    for(;;){
-        print_char('B');
-        task_sleep(20);
-    }
+void task_j1(void *arg){
+
+    task_t *worker = arg;
+
+    print_string("Joiner1: start\n");
+
+    task_sleep(20);
+    task_join(worker);
+    task_join(worker);
+
+    print_string("Joiner1: End\n");
 }
 
-void task3(void){
-    for(;;){
-        print_char('C');
-        task_sleep(40);
-    }
+void task_j2(void *arg){
+
+    task_t *worker = arg;
+
+    print_string("Joiner2: start\n");
+
+    task_join(worker);
+
+    print_string("Joiner2: End\n");
 }
 
 void kmain(void) {
@@ -170,12 +181,12 @@ void kmain(void) {
 
     scheduler_init();
 
-    task_t *t1 = task_create(task1);
-    task_t *t2 = task_create(task2);
+    task_t *work = task_create(task_w, NULL);
 
-    scheduler_add(t1);
-    scheduler_add(t2);
-    scheduler_add(task_create(task3));
+    scheduler_add(work);
+
+    scheduler_add(task_create(task_j1, work));
+    scheduler_add(task_create(task_j2, work));
 
     scheduler_schedule();
 
