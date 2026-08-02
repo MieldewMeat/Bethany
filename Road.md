@@ -15,8 +15,8 @@ KERNEL OBJECTS
 
 STORAGE
 -------
-    [ ] VFS
-    [ ] RAMFS
+    [x] VFS
+    [x] RAMFS
     [ ] BFS (Bethany File System)
 
 DRIVERS
@@ -32,11 +32,11 @@ OS MAKING
     [ ] Language Making
     [ ] exec()
     [ ] Window manager
-    [ ] Shell
     [ ] BVI (Bethany Vector Images)
     [ ] BVV (Bethany Vector Video)
     [ ] BVS (Bethany Vector Scene)
     [ ] BVA (Bethany Vector App)
+    [ ] Shell
 
 OS LIBS
 -------

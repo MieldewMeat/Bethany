@@ -32,6 +32,8 @@
 #include "sync/event.h"
 #include "sync/queue.h"
 
+#include "filesystem/vfs.h"
+
 #define LAPIC_LVT0 (0x350 / 4)
 
 __attribute__((used, section(".limine_requests")))
@@ -154,7 +156,44 @@ void kmain(void) {
 
     scheduler_init();
 
+    vfs_init();
+
+    vfs_node_t *home = vfs_create(vfs_root(), "home", FS_DIRECTORY);
+
+    vfs_create(home, "notes.txt", FS_FILE);
+    vfs_create(home, "music", FS_DIRECTORY);
+    vfs_create(vfs_root(), "bin", FS_DIRECTORY);
+    vfs_create(vfs_root(), "etc", FS_DIRECTORY);
+
+
+    char msg[] = "Hello World!";
+
+    vfs_write(vfs_find(home,"notes.txt"), msg, sizeof(msg));
+
+    vfs_move(home, vfs_root());
+
+    vfs_node_t *chome = vfs_copy(home, vfs_root());
+
+    vfs_delete(vfs_find(home, "notes.txt"));
+
+    vfs_delete(home);
+
+    vfs_rename(chome, "home");
+
+    vfs_dump(vfs_root());
     
+    char msg2[] = "Changed";
+
+    vfs_write(vfs_find(chome,"notes.txt"), msg2, sizeof(msg2));
+
+    char buffer[32];
+
+    size_t n = vfs_read(vfs_find(chome, "notes.txt"), buffer, sizeof(buffer), 0);
+
+    print_char('\n');
+    print_string(buffer);
+    print_string("\nSize: ");
+    print_uint(n);
 
     scheduler_schedule();
 
