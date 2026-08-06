@@ -47,3 +47,11 @@ void *memcpy(void *dest, const void *src, size_t n){
 
     return dest;
 }
+
+void *memset(void *ptr, uint8_t value, size_t n){
+    uint8_t *p = ptr;
+
+    while(n--) *p++ = (uint8_t)value;
+
+    return ptr;
+}

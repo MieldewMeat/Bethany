@@ -103,7 +103,7 @@ void pmm_free_page(void* page){
         uint64_t start = usable[i].base;
         uint64_t end = start + usable[i].pages * PAGE_SIZE;
 
-        if(addr >= start && addr <= end){
+        if(addr >= start && addr < end){
             bitmap_index += (addr - start) / PAGE_SIZE;
             bitmap_clear(bitmap_index);
             return;

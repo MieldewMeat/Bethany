@@ -17,6 +17,9 @@ STORAGE
 -------
     [x] VFS
     [x] RAMFS
+    [x] NVMe
+    [x] Block Device
+    [ ] GPT
     [ ] BFS (Bethany File System)
 
 DRIVERS

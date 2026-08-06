@@ -16,10 +16,13 @@ void irq_register(uint8_t irq, irq_handler_t handler){
 }
 
 void irq_handler(interrupt_frame_t* frame){
+
     uint8_t irq = frame->interrupt - 32;
 
     if(irq_handlers[irq] != NULL)
         irq_handlers[irq](frame);
+    else
+        pic_set_mask(irq);
     
 
     pic_send_eoi(irq);

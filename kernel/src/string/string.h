@@ -12,3 +12,5 @@ char *strcpy(char *dst, const char *src);
 char *strdup(const char *str);
 
 void *memcpy(void *dest, const void *src, size_t n);
+
+void *memset(void *ptr, uint8_t value, size_t n);

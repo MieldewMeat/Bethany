@@ -24,6 +24,8 @@ run:
 		-M q35 \
 		-cdrom $(IMAGE_NAME).iso \
 		-boot d \
+		-drive file=build/nvme.img,if=none,id=nvme0,format=raw \
+		-device nvme,drive=nvme0,serial=BethanySSD \
 		$(QEMUFLAGS)
 
 rund:
@@ -31,6 +33,8 @@ rund:
     	-M q35 \
     	-cdrom $(IMAGE_NAME).iso \
     	-boot d \
+		-drive file=build/nvme.img,if=none,id=nvme0,format=raw \
+		-device nvme,drive=nvme0,serial=BethanySSD \
     	-no-reboot \
     	-no-shutdown \
     	$(QEMUFLAGS)

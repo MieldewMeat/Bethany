@@ -291,3 +291,15 @@ void vmm_free_page(uint64_t virt){
 
     pmm_free_page((void *)(phys & ~0xFFFULL));
 }
+
+void *vmm_phys_to_virt(uint64_t phys){
+    return (void *)(phys + hhdm_offset);
+}
+
+uint64_t vmm_virt_to_phys(void *virt){
+    return (uint64_t)virt - hhdm_offset;
+}
+
+void vmm_map_range(uint64_t virt, uint64_t phys, uint64_t size, uint64_t flags){
+    for(uint64_t offset = 0; offset < size; offset += PAGE_SIZE) vmm_map(virt + offset, phys + offset, flags);
+}
